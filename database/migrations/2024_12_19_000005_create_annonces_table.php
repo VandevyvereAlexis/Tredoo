@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->nullable()->constrained('brands')->onDelete('restrict');
-            $table->foreignId('model_id')->nullable()->constrained('models')->onDelete('restrict');
+            $table->foreignId('car_model_id')->nullable()->constrained('car_models')->onDelete('restrict');
 
             $table->string('title', 150);
             $table->boolean('sold')->default(false);
@@ -123,7 +123,7 @@ return new class extends Migration
 
             // indexation
             $table->index('brand_id');
-            $table->index('model_id');
+            $table->index('car_model_id');
             $table->index('price');
             $table->index('mileage');
             $table->index('type');
