@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('car_models', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->unique();
+            $table->string('name', 100);
+            $table->foreignId('brand_id')->constrained('brands')->onDelete('restrict');
             $table->timestamps();
             $table->softDeletes();
         });
