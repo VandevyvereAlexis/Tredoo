@@ -6,11 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -18,12 +21,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'role_id',
         'last_name',
         'first_name',
         'username',
-        'profile_image',
         'email',
         'password',
+        'profile_image',
+        'email_verified_at',
     ];
 
     /**
@@ -47,5 +52,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    // Chaque utilisateur possède un rôle.
+    public function role() {
+        return $this->belongsTo(Role::class);
+    }
+
+    // Un utilisateur peut avoir plusieurs annonces.
+    public function annonces() {
+        return $this->hasMany(Annonce::class);
     }
 }
