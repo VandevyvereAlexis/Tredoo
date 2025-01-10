@@ -13,7 +13,8 @@ class AnnonceController extends Controller
      */
     public function index()
     {
-        //
+        $annonces = Annonce::with('images')->paginate(10);
+        return response()->json($annonces, 200);
     }
 
     /**

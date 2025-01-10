@@ -13,7 +13,8 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
+        $messages = Message::paginate(10);
+        return response()->json($messages, 200);
     }
 
     /**

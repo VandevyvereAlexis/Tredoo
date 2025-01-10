@@ -13,7 +13,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        //
+        $brands = Brand::with('carmodels')->paginate(10);
+        return response()->json($brands, 200);
     }
 
     /**

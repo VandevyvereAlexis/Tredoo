@@ -13,7 +13,8 @@ class FavoriteController extends Controller
      */
     public function index()
     {
-        //
+        $favorites = Favorite::paginate(10);
+        return response()->json($favorites, 200);
     }
 
     /**

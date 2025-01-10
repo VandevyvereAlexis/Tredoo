@@ -13,7 +13,8 @@ class ImageController extends Controller
      */
     public function index()
     {
-        //
+        $images = Image::paginate(10);
+        return response()->json($images, 200);
     }
 
     /**

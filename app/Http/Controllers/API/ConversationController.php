@@ -13,7 +13,8 @@ class ConversationController extends Controller
      */
     public function index()
     {
-        //
+        $conversations = Conversation::paginate(10);
+        return response()->json($conversations, 200);
     }
 
     /**

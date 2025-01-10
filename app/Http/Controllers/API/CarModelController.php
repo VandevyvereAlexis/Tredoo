@@ -13,7 +13,8 @@ class CarModelController extends Controller
      */
     public function index()
     {
-        //
+        $carModels = CarModel::with('brand')->paginate(10);
+        return response()->json($carModels, 200);
     }
 
     /**

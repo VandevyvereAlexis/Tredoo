@@ -13,7 +13,8 @@ class ConversationStateController extends Controller
      */
     public function index()
     {
-        //
+        $conversationStates = ConversationState::paginate(10);
+        return response()->json($conversationStates, 200);
     }
 
     /**
