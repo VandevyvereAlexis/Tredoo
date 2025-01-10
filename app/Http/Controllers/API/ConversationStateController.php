@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\ConversationState;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreConversationStateRequest;
 
 class ConversationStateController extends Controller
 {
@@ -20,7 +21,7 @@ class ConversationStateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreConversationStateRequest $request)
     {
         //
     }

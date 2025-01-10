@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\CarModel;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCarModelRequest;
 
 class CarModelController extends Controller
 {
@@ -20,7 +21,7 @@ class CarModelController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCarModelRequest $request)
     {
         //
     }
