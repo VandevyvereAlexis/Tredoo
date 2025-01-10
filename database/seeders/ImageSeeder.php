@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Annonce;
 use App\Models\Image;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,6 +14,18 @@ class ImageSeeder extends Seeder
      */
     public function run(): void
     {
-        Image::factory(3500)->create();
+        $annonces = Annonce::all();
+
+        foreach ($annonces as $annonce) {
+            $positions = range(1, 10);
+            shuffle($positions);
+
+            foreach ($positions as $position) {
+                Image::factory()->create([
+                    'annonce_id' => $annonce->id,
+                'position' => $position,
+                ]);
+            }
+        }
     }
 }
