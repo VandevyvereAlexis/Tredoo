@@ -40,4 +40,9 @@ class Conversation extends Model
     public function seller() {
         return $this->belongsTo(User::class, 'seller_id');
     }
+
+    // Une conversation contient plusieurs messages échangés entre l'acheteur et le vendeur.
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
 }

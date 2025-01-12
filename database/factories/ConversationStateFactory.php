@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Conversation;
 use App\Models\ConversationState;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,9 +18,14 @@ class ConversationStateFactory extends Factory
      */
     public function definition(): array
     {
+        $conversation = Conversation::inRandomOrder()->first();
+
         return [
-            'conversation_id' => Conversation::inRandomOrder()->value('id'),
-            'user_id' => User::inRandomOrder()->value('id'),
+            'conversation_id' => $conversation->id,
+            'user_id' => $this->faker->randomElement([
+                $conversation->buyer_id,
+                $conversation->seller_id,
+            ]),
             'status' => $this->faker->randomElement(ConversationState::STATUS),
         ];
     }

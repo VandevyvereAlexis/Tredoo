@@ -64,4 +64,14 @@ class User extends Authenticatable
     public function annonces() {
         return $this->hasMany(Annonce::class);
     }
+
+    // Un utilisateur peut être un acheteur dans plusieurs conversations.
+    public function conversationsAsBuyer() {
+        return $this->hasMany(Conversation::class, 'buyer_id');
+    }
+
+    // Un utilisateur peut être un vendeur dans plusieurs conversations.
+    public function conversationsAsSeller() {
+        return $this->hasMany(Conversation::class, 'seller_id');
+    }
 }
