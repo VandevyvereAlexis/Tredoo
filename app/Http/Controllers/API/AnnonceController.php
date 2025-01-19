@@ -23,7 +23,13 @@ class AnnonceController extends Controller
      */
     public function store(StoreAnnonceRequest $request)
     {
-        //
+        $data = $request->validated();
+        $annonce = Annonce::create($data);
+
+        return response()->json([
+            'message' => 'Annonce créée avec succès.',
+            'annonce' => $annonce
+        ], 201);
     }
 
     /**
