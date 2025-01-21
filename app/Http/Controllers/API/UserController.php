@@ -23,7 +23,25 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        // Gestion de l'upload de l'image de profil
+        if ($request->hasFile('profile_image')) {
+            $data['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+        } else {
+            $data['profile_image'] = 'profile_images/default.jpg'; // Chemin par défaut
+        }
+
+        // Hachage du mot de passe
+        $data['password'] = bcrypt($data['password']);
+
+        // Création de l'utilisateur
+        $user = User::create($data);
+
+        return response()->json([
+            'message' => 'Utilisateur créé avec succès.',
+            'user' => $user
+        ], 201);
     }
 
     /**
