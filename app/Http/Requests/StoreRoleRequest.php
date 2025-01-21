@@ -11,7 +11,7 @@ class StoreRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:100|unique:roles,name',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Le champ "Nom" est obligatoire.',
+            'name.string'   => 'Le champ "Nom" doit être une chaîne de caractères valide.',
+            'name.max'      => 'Le champ "Nom" ne doit pas dépasser 100 caractères.',
+            'name.unique'   => 'Le champ "Nom" doit être unique, ce rôle existe déjà.',
         ];
     }
 }
