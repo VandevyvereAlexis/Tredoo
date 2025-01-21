@@ -148,4 +148,9 @@ class Annonce extends Model
     public function images() {
         return $this->hasMany(Image::class);
     }
+
+    // Le vendeur est l'utilisateur qui a créé l'annonce
+    public function seller() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

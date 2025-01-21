@@ -19,21 +19,21 @@ class ConversationSeeder extends Seeder
 
         foreach ($annonces as $annonce)
         {
-            $buyer = $annonce->user_id;
+            $seller = $annonce->user_id;
 
-            $sellers = User::where('id', '!=', $buyer)
+            $buyers = User::where('id', '!=', $seller)
                 ->inRandomOrder()
                 ->take(rand(1, 3))
                 ->get();
 
-            foreach ($sellers as $seller)
+            foreach ($buyers as $buyer)
             {
-                if (!Conversation::where('annonce_id', $annonce->id)->where('seller_id', $seller->id)->exists())
+                if (!Conversation::where('annonce_id', $annonce->id)->where('buyer_id', $buyer->id)->exists())
                 {
                     Conversation::factory()->create([
                         'annonce_id' => $annonce->id,
-                        'buyer_id' => $buyer,
-                        'seller_id' => $seller->id,
+                        'seller_id' => $seller,
+                        'buyer_id' => $buyer->id,
                     ]);
                 }
             }
