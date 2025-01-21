@@ -23,7 +23,29 @@ class ImageController extends Controller
      */
     public function store(StoreImageRequest $request)
     {
-        //
+        $annonceId = $request->input('annonce_id');
+        $newImages = $request->file('images');
+        $positions = $request->input('positions', []);
+
+        $existingImagesCount = Image::where('annonce_id', $annonceId)->count();
+        $totalImagesCount = $existingImagesCount + count($newImages);
+
+        if ($totalImagesCount > 10) {
+            return response()->json(['message' => 'Maximum de 10 images atteint pour cette annonce.'], 422);
+        }
+
+        foreach ($newImages as $key => $image) {
+            $path = $image->store('images', 'public');
+            $position = $positions[$key] ?? $existingImagesCount + $key + 1;
+
+            Image::create([
+                'annonce_id' => $annonceId,
+                'url'        => $path,
+                'position'   => $position,
+            ]);
+        }
+
+        return response()->json(['message' => 'Images téléchargées avec succès.'], 201);
     }
 
     /**
