@@ -11,7 +11,7 @@ class StoreConversationStateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,22 @@ class StoreConversationStateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'conversation_id' => 'required|exists:conversations,id',
+            'user_id'         => 'required|exists:users,id',
+            'status'          => 'nullable|in:visible,supprimee,archivee',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'conversation_id.required' => 'Le champ "ID de la conversation" est obligatoire.',
+            'conversation_id.exists'   => 'La conversation spécifiée n\'existe pas.',
+
+            'user_id.required' => 'Le champ "ID de l\'utilisateur" est obligatoire.',
+            'user_id.exists'   => 'L\'utilisateur spécifié n\'existe pas.',
+
+            'status.in' => 'Le statut doit être l\'une des valeurs suivantes : visible, supprimée ou archivée.',
         ];
     }
 }
