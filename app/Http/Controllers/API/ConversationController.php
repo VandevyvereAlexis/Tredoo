@@ -23,7 +23,33 @@ class ConversationController extends Controller
      */
     public function store(StoreConversationRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        // Vérification si une conversation existe déjà pour ces paramètres
+        $existingConversation = Conversation::where('annonce_id', $validatedData['annonce_id'])
+            ->where('buyer_id', $validatedData['buyer_id'])
+            ->where('seller_id', $validatedData['seller_id'])
+            ->first();
+
+        if ($existingConversation) {
+            return response()->json([
+                'message' => 'Une conversation existe déjà entre cet acheteur et ce vendeur pour cette annonce.',
+                'conversation' => $existingConversation
+            ], 409);
+        }
+
+        // Création d'une nouvelle conversation
+        $conversation = Conversation::create([
+            'annonce_id' => $validatedData['annonce_id'],
+            'buyer_id' => $validatedData['buyer_id'],
+            'seller_id' => $validatedData['seller_id'],
+            'status' => 'ouverte', // Statut par défaut
+        ]);
+
+        return response()->json([
+            'message' => 'Conversation créée avec succès.',
+            'conversation' => $conversation
+        ], 201);
     }
 
     /**
