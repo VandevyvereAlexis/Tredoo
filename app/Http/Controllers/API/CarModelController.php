@@ -23,7 +23,13 @@ class CarModelController extends Controller
      */
     public function store(StoreCarModelRequest $request)
     {
-        //
+        $data = $request->validated();
+        $carModel = CarModel::create($data);
+
+        return response()->json([
+            'message' => 'Modèle de voiture créé avec succès.',
+            'car_model' => $carModel
+        ], 201);
     }
 
     /**
