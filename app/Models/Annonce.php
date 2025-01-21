@@ -143,4 +143,9 @@ class Annonce extends Model
     public function carModel() {
         return $this->belongsTo(CarModel::class);
     }
+
+    // Une annonce peut avoir plusieurs images
+    public function images() {
+        return $this->hasMany(Image::class);
+    }
 }
