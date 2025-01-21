@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreMessageRequest;
+use App\Models\Conversation;
 
 class MessageController extends Controller
 {
@@ -23,7 +24,28 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        // Vérifier si l'utilisateur est participant de la conversation
+        $conversation = Conversation::findOrFail($data['conversation_id']);
+        if (!in_array($data['user_id'], [$conversation->buyer_id, $conversation->seller_id])) {
+            return response()->json([
+                'message' => 'L\'utilisateur n\'est pas participant de cette conversation.'
+            ], 403);
+        }
+
+        // Créer le message
+        $message = Message::create([
+            'conversation_id' => $data['conversation_id'],
+            'user_id' => $data['user_id'],
+            'content' => $data['content'],
+            'read' => $data['read'] ?? false, // Par défaut non lu
+        ]);
+
+        return response()->json([
+            'message' => 'Message envoyé avec succès.',
+            'message_details' => $message
+        ], 201);
     }
 
     /**
