@@ -23,7 +23,14 @@ class BrandController extends Controller
      */
     public function store(StoreBrandRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        $brand = Brand::create($data);
+
+        return response()->json([
+            'message' => 'Marque créée avec succès.',
+            'brand' => $brand
+        ], 201);
     }
 
     /**

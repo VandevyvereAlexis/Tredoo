@@ -11,7 +11,7 @@ class StoreBrandRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class StoreBrandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:100|unique:brands,name',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Le nom de la marque est requis.',
+            'name.string'   => 'Le nom de la marque doit être une chaîne de caractères.',
+            'name.max'      => 'Le nom de la marque ne peut pas dépasser 100 caractères.',
+            'name.unique'   => 'Ce nom de marque existe déjà.',
         ];
     }
 }
