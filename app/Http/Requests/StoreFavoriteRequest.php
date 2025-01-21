@@ -11,7 +11,7 @@ class StoreFavoriteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,19 @@ class StoreFavoriteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id'    => 'required|exists:users,id',
+            'annonce_id' => 'required|exists:annonces,id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'user_id.required' => 'Le champ "ID de l\'utilisateur" est obligatoire.',
+            'user_id.exists'   => 'L\'utilisateur spécifié n\'existe pas.',
+            
+            'annonce_id.required' => 'Le champ "ID de l\'annonce" est obligatoire.',
+            'annonce_id.exists'   => 'L\'annonce spécifiée n\'existe pas.',
         ];
     }
 }

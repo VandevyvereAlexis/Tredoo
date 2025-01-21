@@ -23,7 +23,27 @@ class FavoriteController extends Controller
      */
     public function store(StoreFavoriteRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        // Vérification si le favori existe déjà
+        $existingFavorite = Favorite::where('user_id', $data['user_id'])
+            ->where('annonce_id', $data['annonce_id'])
+            ->first();
+
+        if ($existingFavorite) {
+            return response()->json([
+                'message' => 'Ce favori existe déjà.',
+                'favorite' => $existingFavorite
+            ], 409);
+        }
+
+        // Création du favori
+        $favorite = Favorite::create($data);
+
+        return response()->json([
+            'message' => 'Favori ajouté avec succès.',
+            'favorite' => $favorite
+        ], 201);
     }
 
     /**
