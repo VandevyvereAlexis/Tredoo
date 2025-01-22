@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ConversationState;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreConversationStateRequest;
-use App\Models\Conversation;
+use App\Http\Requests\UpdateConversationStateRequest;
 
 class ConversationStateController extends Controller
 {
@@ -53,15 +53,10 @@ class ConversationStateController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Récupération de l'état de conversation avec ses relations
         $conversationState = ConversationState::with(['conversation', 'user'])->find($id);
 
-        // Vérification si l'état existe
         if (!$conversationState) {
             return response()->json([
                 'message' => 'État de conversation non trouvé.',
@@ -78,21 +73,30 @@ class ConversationStateController extends Controller
 
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ConversationState $conversationState)
+    public function update(UpdateConversationStateRequest $request, $id)
     {
-        //
+        // Recherche explicite de l'état de conversation
+        $conversationState = ConversationState::find($id);
+
+        if (!$conversationState) {
+            return response()->json([
+                'message' => 'État de conversation introuvable.',
+            ], 404);
+        }
+
+        $data = $request->validated();
+        $conversationState->fill($data)->save();
+
+        return response()->json([
+            'message' => 'État de conversation mis à jour avec succès.',
+            'conversation_state' => $conversationState->fresh(),
+        ], 200);
     }
 
 
 
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(ConversationState $conversationState)
     {
         //
