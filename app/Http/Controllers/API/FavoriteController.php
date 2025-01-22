@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Favorite;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreFavoriteRequest;
+use App\Http\Requests\UpdateFavoriteRequest;
 
 class FavoriteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $favorites = Favorite::paginate(10);
@@ -22,9 +20,6 @@ class FavoriteController extends Controller
 
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreFavoriteRequest $request)
     {
         $data = $request->validated();
@@ -41,7 +36,6 @@ class FavoriteController extends Controller
             ], 409);
         }
 
-        // Création du favori
         $favorite = Favorite::create($data);
 
         return response()->json([
@@ -54,22 +48,16 @@ class FavoriteController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Récupération du favori avec ses relations
         $favorite = Favorite::with(['user', 'annonce'])->find($id);
 
-        // Vérification si le favori existe
         if (!$favorite) {
             return response()->json([
                 'message' => 'Favori non trouvé.',
             ], 404);
         }
 
-        // Retour des détails du favori
         return response()->json([
             'message' => 'Détails du favori récupérés avec succès.',
             'favorite' => $favorite
@@ -80,21 +68,35 @@ class FavoriteController extends Controller
 
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Favorite $favorite)
+    public function update(UpdateFavoriteRequest $request, Favorite $favorite)
     {
-        //
+        $data = $request->validated();
+
+        // Vérifie si un favori identique existe déjà pour un autre enregistrement
+        $existingFavorite = Favorite::where('user_id', $data['user_id'] ?? $favorite->user_id)
+            ->where('annonce_id', $data['annonce_id'] ?? $favorite->annonce_id)
+            ->where('id', '!=', $favorite->id)
+            ->first();
+
+        if ($existingFavorite) {
+            return response()->json([
+                'message' => 'Un favori identique existe déjà.',
+            ], 409);
+        }
+
+        // Mise à jour du favori
+        $favorite->update($data);
+
+        return response()->json([
+            'message' => 'Favori mis à jour avec succès.',
+            'favorite' => $favorite
+        ], 200);
     }
 
 
 
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Favorite $favorite)
     {
         //
