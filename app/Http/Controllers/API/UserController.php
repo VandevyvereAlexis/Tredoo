@@ -18,6 +18,10 @@ class UserController extends Controller
         return response()->json($users, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -44,13 +48,35 @@ class UserController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($id)
     {
-        //
+        // Récupération de l'utilisateur avec son rôle et ses annonces
+        $user = User::with(['role', 'annonces'])->find($id);
+
+        // Vérification si l'utilisateur existe
+        if (!$user) {
+            return response()->json([
+                'message' => 'Utilisateur non trouvé.',
+            ], 404);
+        }
+
+        // Retour des détails de l'utilisateur
+        return response()->json([
+            'message' => 'Détails de l\'utilisateur récupérés avec succès.',
+            'user' => $user
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -59,6 +85,10 @@ class UserController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

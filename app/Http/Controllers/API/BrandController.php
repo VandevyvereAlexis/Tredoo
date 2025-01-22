@@ -18,6 +18,10 @@ class BrandController extends Controller
         return response()->json($brands, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -33,13 +37,43 @@ class BrandController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Brand $brand)
+    public function show($id)
     {
-        //
+        // Récupération de la marque avec ses modèles
+        $brand = Brand::with('carModels')->find($id);
+
+        // Vérification si la marque existe
+        if (!$brand) {
+            return response()->json([
+                'message' => 'Marque non trouvée.',
+            ], 404);
+        }
+
+        // Vérification si la marque a des modèles associés
+        if ($brand->carModels->isEmpty()) {
+            return response()->json([
+                'message' => 'Aucun modèle de voiture associé à cette marque.',
+                'brand' => $brand
+            ], 200);
+        }
+
+        // Retour des détails de la marque avec ses modèles
+        return response()->json([
+            'message' => 'Détails de la marque récupérés avec succès.',
+            'brand' => $brand
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -48,6 +82,10 @@ class BrandController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

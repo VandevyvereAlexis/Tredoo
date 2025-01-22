@@ -19,6 +19,10 @@ class MessageController extends Controller
         return response()->json($messages, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -48,13 +52,35 @@ class MessageController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Message $message)
+    public function show($id)
     {
-        //
+        // Récupération du message avec ses relations
+        $message = Message::with(['conversation', 'user'])->find($id);
+
+        // Vérification si le message existe
+        if (!$message) {
+            return response()->json([
+                'message' => 'Message non trouvé.',
+            ], 404);
+        }
+
+        // Retour des détails du message
+        return response()->json([
+            'message' => 'Détails du message récupérés avec succès.',
+            'message_details' => $message
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -63,6 +89,10 @@ class MessageController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

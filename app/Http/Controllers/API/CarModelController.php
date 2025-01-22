@@ -18,6 +18,10 @@ class CarModelController extends Controller
         return response()->json($carModels, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -32,13 +36,34 @@ class CarModelController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(CarModel $carModel)
+    public function show($id)
     {
-        //
+        // Récupération du modèle avec la marque
+        $carModel = CarModel::with('brand')->find($id);
+
+        // Vérification si le modèle existe
+        if (!$carModel) {
+            return response()->json([
+                'message' => 'Modèle de voiture non trouvé.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Détails du modèle de voiture récupérés avec succès.',
+            'car_model' => $carModel
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -47,6 +72,10 @@ class CarModelController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

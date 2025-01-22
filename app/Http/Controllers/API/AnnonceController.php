@@ -18,6 +18,10 @@ class AnnonceController extends Controller
         return response()->json($annonces, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -32,13 +36,34 @@ class AnnonceController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Annonce $annonce)
+    public function show($id)
     {
-        //
+        // Récupération de l'annonce avec ses relations
+        $annonce = Annonce::with(['images', 'user', 'brand', 'carModel'])->find($id);
+
+        // Vérification si l'annonce existe
+        if (!$annonce) {
+            return response()->json([
+                'message' => 'Annonce non trouvée.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Détails de l\'annonce récupérés avec succès.',
+            'annonce' => $annonce
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -47,6 +72,10 @@ class AnnonceController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

@@ -18,6 +18,10 @@ class FavoriteController extends Controller
         return response()->json($favorites, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -46,13 +50,35 @@ class FavoriteController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Favorite $favorite)
+    public function show($id)
     {
-        //
+        // Récupération du favori avec ses relations
+        $favorite = Favorite::with(['user', 'annonce'])->find($id);
+
+        // Vérification si le favori existe
+        if (!$favorite) {
+            return response()->json([
+                'message' => 'Favori non trouvé.',
+            ], 404);
+        }
+
+        // Retour des détails du favori
+        return response()->json([
+            'message' => 'Détails du favori récupérés avec succès.',
+            'favorite' => $favorite
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -61,6 +87,10 @@ class FavoriteController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

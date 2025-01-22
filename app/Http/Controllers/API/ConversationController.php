@@ -18,6 +18,10 @@ class ConversationController extends Controller
         return response()->json($conversations, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -52,13 +56,34 @@ class ConversationController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Conversation $conversation)
+    public function show($id)
     {
-        //
+        // Récupération de la conversation avec ses relations
+        $conversation = Conversation::with(['annonce', 'buyer', 'seller', 'messages'])->find($id);
+
+        // Vérification si la conversation existe
+        if (!$conversation) {
+            return response()->json([
+                'message' => 'Conversation non trouvée.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Détails de la conversation récupérés avec succès.',
+            'conversation' => $conversation
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -67,6 +92,10 @@ class ConversationController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

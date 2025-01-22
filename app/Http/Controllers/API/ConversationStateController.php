@@ -56,10 +56,27 @@ class ConversationStateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ConversationState $conversationState)
+    public function show($id)
     {
-        //
+        // Récupération de l'état de conversation avec ses relations
+        $conversationState = ConversationState::with(['conversation', 'user'])->find($id);
+
+        // Vérification si l'état existe
+        if (!$conversationState) {
+            return response()->json([
+                'message' => 'État de conversation non trouvé.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Détails de l\'état de conversation récupérés avec succès.',
+            'conversation_state' => $conversationState
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -68,6 +85,10 @@ class ConversationStateController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

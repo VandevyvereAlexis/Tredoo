@@ -18,6 +18,10 @@ class RoleController extends Controller
         return response()->json($roles, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -32,13 +36,35 @@ class RoleController extends Controller
         ], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show($id)
     {
-        //
+        // Récupération du rôle avec ses utilisateurs associés
+        $role = Role::with('users')->find($id);
+
+        // Vérification si le rôle existe
+        if (!$role) {
+            return response()->json([
+                'message' => 'Rôle non trouvé.',
+            ], 404);
+        }
+
+        // Retour des détails du rôle
+        return response()->json([
+            'message' => 'Détails du rôle récupérés avec succès.',
+            'role' => $role
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -47,6 +73,10 @@ class RoleController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

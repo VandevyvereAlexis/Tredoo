@@ -18,6 +18,10 @@ class ImageController extends Controller
         return response()->json($images, 200);
     }
 
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -48,13 +52,35 @@ class ImageController extends Controller
         return response()->json(['message' => 'Images téléchargées avec succès.'], 201);
     }
 
+
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(Image $image)
+    public function show($id)
     {
-        //
+        // Récupération de l'image avec sa relation (annonce si nécessaire)
+        $image = Image::with('annonce')->find($id);
+
+        // Vérification si l'image existe
+        if (!$image) {
+            return response()->json([
+                'message' => 'Image non trouvée.',
+            ], 404);
+        }
+
+        // Retour des détails de l'image
+        return response()->json([
+            'message' => 'Détails de l\'image récupérés avec succès.',
+            'image' => $image
+        ], 200);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -63,6 +89,10 @@ class ImageController extends Controller
     {
         //
     }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.
