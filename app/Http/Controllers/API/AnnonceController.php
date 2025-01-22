@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Annonce;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreAnnonceRequest;
+use App\Http\Requests\UpdateAnnonceRequest;
 
 class AnnonceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $annonces = Annonce::with('images')->paginate(10);
@@ -22,9 +20,6 @@ class AnnonceController extends Controller
 
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreAnnonceRequest $request)
     {
         $data = $request->validated();
@@ -40,15 +35,10 @@ class AnnonceController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Récupération de l'annonce avec ses relations
         $annonce = Annonce::with(['images', 'user', 'brand', 'carModel'])->find($id);
 
-        // Vérification si l'annonce existe
         if (!$annonce) {
             return response()->json([
                 'message' => 'Annonce non trouvée.',
@@ -65,21 +55,24 @@ class AnnonceController extends Controller
 
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Annonce $annonce)
+    public function update(UpdateAnnonceRequest $request, Annonce $annonce)
     {
-        //
+        // Récupération des données validées
+        $data = $request->validated();
+
+        // Mise à jour de l'annonce avec les nouvelles données
+        $annonce->update($data);
+
+        return response()->json([
+            'message' => 'Annonce mise à jour avec succès.',
+            'annonce' => $annonce
+        ], 200);
     }
 
 
 
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Annonce $annonce)
     {
         //
