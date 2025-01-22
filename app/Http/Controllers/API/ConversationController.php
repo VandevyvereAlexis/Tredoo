@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreConversationRequest;
+use App\Http\Requests\UpdateConversationRequest;
 
 class ConversationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $conversations = Conversation::paginate(10);
@@ -22,9 +20,6 @@ class ConversationController extends Controller
 
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreConversationRequest $request)
     {
         $validatedData = $request->validated();
@@ -60,15 +55,10 @@ class ConversationController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Récupération de la conversation avec ses relations
         $conversation = Conversation::with(['annonce', 'buyer', 'seller', 'messages'])->find($id);
 
-        // Vérification si la conversation existe
         if (!$conversation) {
             return response()->json([
                 'message' => 'Conversation non trouvée.',
@@ -85,21 +75,21 @@ class ConversationController extends Controller
 
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Conversation $conversation)
+    public function update(UpdateConversationRequest $request, Conversation $conversation)
     {
-        //
+        $data = $request->validated();
+        $conversation->update($data);
+
+        return response()->json([
+            'message' => 'Conversation mise à jour avec succès.',
+            'conversation' => $conversation
+        ], 200);
     }
 
 
 
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Conversation $conversation)
     {
         //
