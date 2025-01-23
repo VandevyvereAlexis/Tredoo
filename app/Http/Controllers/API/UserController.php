@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdatePasswordRequest;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -79,6 +81,31 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Utilisateur mis à jour avec succès.',
             'user' => $user
+        ], 200);
+    }
+
+
+
+
+
+    public function updatePassword(UpdatePasswordRequest $request, User $user)
+    {
+        if (!Hash::check($request->oldPassword, $user->password)) {
+            return response()->json([
+                'message' => 'Le mot de passe actuel est incorrect.'
+            ], 403);
+        }
+
+        if (Hash::check($request->newPassword, $user->password)) {
+            return response()->json([
+                'message' => 'Le nouveau mot de passe ne peut pas être identique à l\'ancien.'
+            ], 422);
+        }
+
+        $user->update(['password' => Hash::make($request->newPassword)]);
+
+        return response()->json([
+            'message' => 'Mot de passe mis à jour avec succès.'
         ], 200);
     }
 

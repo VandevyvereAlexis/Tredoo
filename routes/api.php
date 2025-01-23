@@ -28,3 +28,5 @@ Route::apiResource('images', ImageController::class);
 Route::apiResource('messages', MessageController::class);
 Route::apiResource('roles', RoleController::class);
 Route::apiResource('users', UserController::class);
+
+Route::put('users/{user}/password', [App\Http\Controllers\API\UserController::class, 'updatePassword'])->name('users.updatePassword');
