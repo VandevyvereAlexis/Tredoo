@@ -85,8 +85,20 @@ class MessageController extends Controller
 
 
 
-    public function destroy(Message $message)
+    public function destroy($id)
     {
-        //
+        $message = Message::find($id);
+
+        if (!$message) {
+            return response()->json([
+                'message' => 'Message non trouvé.',
+            ], 404);
+        }
+
+        $message->delete();
+
+        return response()->json([
+            'message' => 'Message supprimé avec succès.',
+        ], 200);
     }
 }

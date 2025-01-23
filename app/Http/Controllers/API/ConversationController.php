@@ -92,6 +92,16 @@ class ConversationController extends Controller
 
     public function destroy(Conversation $conversation)
     {
-        //
+        if (!$conversation) {
+            return response()->json([
+                'message' => 'Conversation non trouvée.',
+            ], 404);
+        }
+
+        $conversation->delete();
+
+        return response()->json([
+            'message' => 'Conversation supprimée avec succès.',
+        ], 200);
     }
 }

@@ -97,8 +97,21 @@ class ConversationStateController extends Controller
 
 
 
-    public function destroy(ConversationState $conversationState)
+    public function destroy($id)
     {
-        //
+        // Recherche explicite de l'état de conversation
+        $conversationState = ConversationState::find($id);
+
+        if (!$conversationState) {
+            return response()->json([
+                'message' => 'État de conversation non trouvé.',
+            ], 404);
+        }
+
+        $conversationState->delete();
+
+        return response()->json([
+            'message' => 'État de conversation supprimé avec succès.',
+        ], 200);
     }
 }

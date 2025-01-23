@@ -75,6 +75,10 @@ class AnnonceController extends Controller
 
     public function destroy(Annonce $annonce)
     {
-        //
+        $annonce->delete();
+
+        return response()->json([
+            'message' => 'Annonce supprimée avec succès.'
+        ], 200);
     }
 }

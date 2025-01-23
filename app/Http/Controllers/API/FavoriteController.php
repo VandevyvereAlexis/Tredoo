@@ -97,8 +97,20 @@ class FavoriteController extends Controller
 
 
 
-    public function destroy(Favorite $favorite)
+    public function destroy($id)
     {
-        //
+        $favorite = Favorite::find($id);
+
+        if (!$favorite) {
+            return response()->json([
+                'message' => 'Favori non trouvé.',
+            ], 404);
+        }
+
+        $favorite->delete();
+
+        return response()->json([
+            'message' => 'Favori supprimé avec succès.',
+        ], 200);
     }
 }

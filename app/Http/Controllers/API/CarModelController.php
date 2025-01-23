@@ -7,7 +7,6 @@ use App\Models\CarModel;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCarModelRequest;
 use App\Http\Requests\UpdateCarModelRequest;
-use Illuminate\Support\Facades\Log;
 
 class CarModelController extends Controller
 {
@@ -80,8 +79,20 @@ class CarModelController extends Controller
 
 
 
-    public function destroy(CarModel $carModel)
+    public function destroy($id)
     {
-        //
+        $carModel = CarModel::find($id);
+
+        if (!$carModel) {
+            return response()->json([
+                'message' => 'Modèle de voiture introuvable.',
+            ], 404);
+        }
+
+        $carModel->delete();
+
+        return response()->json([
+            'message' => 'Modèle de voiture supprimé avec succès.'
+        ], 200);
     }
 }
