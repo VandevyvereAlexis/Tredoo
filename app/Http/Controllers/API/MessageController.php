@@ -7,12 +7,10 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreMessageRequest;
 use App\Models\Conversation;
+use App\Http\Requests\UpdateMessageRequest;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $messages = Message::paginate(10);
@@ -23,9 +21,6 @@ class MessageController extends Controller
 
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreMessageRequest $request)
     {
         $data = $request->validated();
@@ -38,12 +33,11 @@ class MessageController extends Controller
             ], 403);
         }
 
-        // Créer le message
         $message = Message::create([
             'conversation_id' => $data['conversation_id'],
             'user_id' => $data['user_id'],
             'content' => $data['content'],
-            'read' => $data['read'] ?? false, // Par défaut non lu
+            'read' => $data['read'] ?? false,
         ]);
 
         return response()->json([
@@ -56,22 +50,16 @@ class MessageController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        // Récupération du message avec ses relations
         $message = Message::with(['conversation', 'user'])->find($id);
 
-        // Vérification si le message existe
         if (!$message) {
             return response()->json([
                 'message' => 'Message non trouvé.',
             ], 404);
         }
 
-        // Retour des détails du message
         return response()->json([
             'message' => 'Détails du message récupérés avec succès.',
             'message_details' => $message
@@ -82,21 +70,21 @@ class MessageController extends Controller
 
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Message $message)
+    public function update(UpdateMessageRequest $request, Message $message)
     {
-        //
+        $data = $request->validated();
+        $message->update($data);
+
+        return response()->json([
+            'message' => 'Message mis à jour avec succès.',
+            'message_details' => $message
+        ], 200);
     }
 
 
 
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Message $message)
     {
         //
