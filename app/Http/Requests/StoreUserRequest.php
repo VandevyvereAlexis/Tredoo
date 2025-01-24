@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class StoreUserRequest extends FormRequest
 {
@@ -27,7 +28,15 @@ class StoreUserRequest extends FormRequest
             'first_name'    => 'required|string|max:50',
             'username'      => 'required|string|max:50|unique:users,username',
             'email'         => 'required|email|max:255|unique:users,email',
-            'password'      => 'required|string|min:8|confirmed',
+            'password'      => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+            ],
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
@@ -55,10 +64,13 @@ class StoreUserRequest extends FormRequest
             'email.max'      => 'Le champ "Email" ne doit pas dépasser 255 caractères.',
             'email.unique'   => 'L\'adresse email est déjà utilisée.',
 
-            'password.required'  => 'Le champ "Mot de passe" est obligatoire.',
-            'password.string'    => 'Le champ "Mot de passe" doit être une chaîne de caractères.',
-            'password.min'       => 'Le champ "Mot de passe" doit contenir au moins 8 caractères.',
-            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.',
+            'password.required'  => 'Le nouveau mot de passe est requis.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            'password.min'       => 'Le nouveau mot de passe doit comporter au moins 8 caractères.',
+            'password.mixedCase' => 'Le nouveau mot de passe doit contenir des lettres minuscules et majuscules.',
+            'password.letters'   => 'Le nouveau mot de passe doit contenir au moins une lettre.',
+            'password.numbers'   => 'Le nouveau mot de passe doit contenir au moins un chiffre.',
+            'password.symbols'   => 'Le nouveau mot de passe doit contenir au moins un caractère spécial.',
 
             'profile_image.image' => 'Le fichier téléchargé doit être une image.',
             'profile_image.mimes' => 'Le fichier doit être au format jpeg, png, jpg ou gif.',
