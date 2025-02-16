@@ -10,8 +10,20 @@ use App\Http\Requests\UpdateConversationRequest;
 
 class ConversationController extends Controller
 {
+    public function __construct()
+    {
+        // Toutes les actions nécessitent une authentification
+        $this->middleware('auth:sanctum');
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', Conversation::class);
+
         $conversations = Conversation::paginate(10);
         return response()->json($conversations, 200);
     }
@@ -22,6 +34,8 @@ class ConversationController extends Controller
 
     public function store(StoreConversationRequest $request)
     {
+        $this->authorize('create', Conversation::class);
+
         $validatedData = $request->validated();
 
         // Vérification si une conversation existe déjà pour ces paramètres
@@ -65,6 +79,8 @@ class ConversationController extends Controller
             ], 404);
         }
 
+        $this->authorize('view', $conversation);
+
         return response()->json([
             'message' => 'Détails de la conversation récupérés avec succès.',
             'conversation' => $conversation
@@ -77,6 +93,8 @@ class ConversationController extends Controller
 
     public function update(UpdateConversationRequest $request, Conversation $conversation)
     {
+        $this->authorize('update', $conversation);
+
         $data = $request->validated();
         $conversation->update($data);
 
@@ -92,11 +110,7 @@ class ConversationController extends Controller
 
     public function destroy(Conversation $conversation)
     {
-        if (!$conversation) {
-            return response()->json([
-                'message' => 'Conversation non trouvée.',
-            ], 404);
-        }
+        $this->authorize('delete', $conversation);
 
         $conversation->delete();
 

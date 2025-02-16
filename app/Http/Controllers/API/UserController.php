@@ -12,8 +12,20 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        // Seules les actions 'index' et 'show' sont publiques
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', User::class);
+
         $users = User::with('role')->paginate(10);
         return response()->json($users, 200);
     }
@@ -24,6 +36,8 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+        $this->authorize('create', User::class);
+
         $data = $request->validated();
 
         // Gestion de l'upload de l'image de profil
@@ -56,6 +70,8 @@ class UserController extends Controller
                 'message' => 'Utilisateur non trouvé.',
             ], 404);
         }
+
+        $this->authorize('view', $user);
 
         return response()->json([
             'message' => 'Détails de l\'utilisateur récupérés avec succès.',
@@ -90,6 +106,8 @@ class UserController extends Controller
 
     public function updatePassword(UpdatePasswordRequest $request, User $user)
     {
+        $this->authorize('updatePassword', $user);
+
         if (!Hash::check($request->oldPassword, $user->password)) {
             return response()->json([
                 'message' => 'Le mot de passe actuel est incorrect.'
@@ -122,6 +140,8 @@ class UserController extends Controller
                 'message' => 'Utilisateur non trouvé.',
             ], 404);
         }
+
+        $this->authorize('delete', $user);
 
         $user->delete();
 

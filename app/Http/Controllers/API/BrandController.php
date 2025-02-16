@@ -10,6 +10,16 @@ use App\Http\Requests\UpdateBrandRequest;
 
 class BrandController extends Controller
 {
+    public function __construct()
+    {
+        // Seules les actions 'index' et 'show' sont publiques
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
+
+
+
+
+
     public function index()
     {
         $brands = Brand::with('carmodels')->paginate(10);
@@ -22,8 +32,9 @@ class BrandController extends Controller
 
     public function store(StoreBrandRequest $request)
     {
-        $data = $request->validated();
+        $this->authorize('store', Brand::class);
 
+        $data = $request->validated();
         $brand = Brand::create($data);
 
         return response()->json([
@@ -36,22 +47,9 @@ class BrandController extends Controller
 
 
 
-    public function show($id)
+    public function show(Brand $brand)
     {
-        $brand = Brand::with('carModels')->find($id);
-
-        if (!$brand) {
-            return response()->json([
-                'message' => 'Marque non trouvée.',
-            ], 404);
-        }
-
-        if ($brand->carModels->isEmpty()) {
-            return response()->json([
-                'message' => 'Aucun modèle de voiture associé à cette marque.',
-                'brand' => $brand
-            ], 200);
-        }
+        $brand->load('carModels');
 
         return response()->json([
             'message' => 'Détails de la marque récupérés avec succès.',
@@ -65,6 +63,8 @@ class BrandController extends Controller
 
     public function update(UpdateBrandRequest $request, Brand $brand)
     {
+        $this->authorize('update', $brand);
+
         $data = $request->validated();
         $brand->update($data);
 
@@ -80,6 +80,8 @@ class BrandController extends Controller
 
     public function destroy(Brand $brand)
     {
+        $this->authorize('destroy', $brand);
+
         $brand->delete();
 
         return response()->json([

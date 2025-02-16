@@ -10,8 +10,20 @@ use App\Http\Requests\UpdateConversationStateRequest;
 
 class ConversationStateController extends Controller
 {
+    public function __construct()
+    {
+        // Toutes les actions nécessitent une authentification
+        $this->middleware('auth:sanctum');
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', ConversationState::class);
+
         $conversationStates = ConversationState::paginate(10);
         return response()->json($conversationStates, 200);
     }
@@ -24,7 +36,6 @@ class ConversationStateController extends Controller
     {
         $validatedData = $request->validated();
 
-        // Vérification si un état existe déjà pour cet utilisateur et cette conversation
         $existingState = ConversationState::where('conversation_id', $validatedData['conversation_id'])
             ->where('user_id', $validatedData['user_id'])
             ->first();
@@ -36,12 +47,15 @@ class ConversationStateController extends Controller
             ], 409);
         }
 
-        // Création d'un nouvel état de conversation
-        $conversationState = ConversationState::create([
+        $conversationState = new ConversationState([
             'conversation_id' => $validatedData['conversation_id'],
             'user_id' => $validatedData['user_id'],
             'status' => $validatedData['status'],
         ]);
+
+        $this->authorize('create', $conversationState);
+
+        $conversationState->save();
 
         return response()->json([
             'message' => 'État de conversation créé avec succès.',
@@ -63,6 +77,8 @@ class ConversationStateController extends Controller
             ], 404);
         }
 
+        $this->authorize('view', $conversationState);
+
         return response()->json([
             'message' => 'Détails de l\'état de conversation récupérés avec succès.',
             'conversation_state' => $conversationState
@@ -83,6 +99,8 @@ class ConversationStateController extends Controller
                 'message' => 'État de conversation introuvable.',
             ], 404);
         }
+
+        $this->authorize('update', $conversationState);
 
         $data = $request->validated();
         $conversationState->fill($data)->save();
@@ -107,6 +125,8 @@ class ConversationStateController extends Controller
                 'message' => 'État de conversation non trouvé.',
             ], 404);
         }
+
+        $this->authorize('delete', $conversationState);
 
         $conversationState->delete();
 

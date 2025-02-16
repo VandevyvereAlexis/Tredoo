@@ -10,6 +10,16 @@ use App\Http\Requests\UpdateAnnonceRequest;
 
 class AnnonceController extends Controller
 {
+    public function __construct()
+    {
+        // Seules les actions 'index' et 'show' sont publiques
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
+
+
+
+
+
     public function index()
     {
         $annonces = Annonce::with('images')->paginate(10);
@@ -22,6 +32,8 @@ class AnnonceController extends Controller
 
     public function store(StoreAnnonceRequest $request)
     {
+        $this->authorize('store', Annonce::class);
+
         $data = $request->validated();
         $annonce = Annonce::create($data);
 
@@ -57,10 +69,9 @@ class AnnonceController extends Controller
 
     public function update(UpdateAnnonceRequest $request, Annonce $annonce)
     {
-        // Récupération des données validées
-        $data = $request->validated();
+        $this->authorize('update', $annonce);
 
-        // Mise à jour de l'annonce avec les nouvelles données
+        $data = $request->validated();
         $annonce->update($data);
 
         return response()->json([
@@ -75,6 +86,8 @@ class AnnonceController extends Controller
 
     public function destroy(Annonce $annonce)
     {
+        $this->authorize('destroy', $annonce);
+
         $annonce->delete();
 
         return response()->json([

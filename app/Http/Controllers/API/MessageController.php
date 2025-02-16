@@ -11,8 +11,20 @@ use App\Http\Requests\UpdateMessageRequest;
 
 class MessageController extends Controller
 {
+    public function __construct()
+    {
+        // Toutes les actions nécessitent une authentification
+        $this->middleware('auth:sanctum');
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', Message::class);
+
         $messages = Message::paginate(10);
         return response()->json($messages, 200);
     }
@@ -40,6 +52,10 @@ class MessageController extends Controller
             'read' => $data['read'] ?? false,
         ]);
 
+        $this->authorize('create', $message);
+
+        $message->save();
+
         return response()->json([
             'message' => 'Message envoyé avec succès.',
             'message_details' => $message
@@ -60,6 +76,8 @@ class MessageController extends Controller
             ], 404);
         }
 
+        $this->authorize('view', $message);
+
         return response()->json([
             'message' => 'Détails du message récupérés avec succès.',
             'message_details' => $message
@@ -72,6 +90,8 @@ class MessageController extends Controller
 
     public function update(UpdateMessageRequest $request, Message $message)
     {
+        $this->authorize('update', $message);
+
         $data = $request->validated();
         $message->update($data);
 
@@ -94,6 +114,8 @@ class MessageController extends Controller
                 'message' => 'Message non trouvé.',
             ], 404);
         }
+
+        $this->authorize('delete', $message);
 
         $message->delete();
 

@@ -10,7 +10,9 @@ use App\Http\Controllers\API\ConversationController;
 use App\Http\Controllers\API\ConversationStateController;
 use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\ImageController;
+use App\Http\Controllers\API\LoginController;
 use App\Http\Controllers\API\MessageController;
+use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\UserController;
 
@@ -30,3 +32,5 @@ Route::apiResource('roles', RoleController::class);
 Route::apiResource('users', UserController::class);
 
 Route::put('users/{user}/password', [App\Http\Controllers\API\UserController::class, 'updatePassword'])->name('users.updatePassword');
+
+Route::post('register', [RegisterController::class, 'register']);

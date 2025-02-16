@@ -10,6 +10,16 @@ use App\Http\Requests\UpdateCarModelRequest;
 
 class CarModelController extends Controller
 {
+    public function __construct()
+    {
+        // Seules les actions 'index' et 'show' sont publiques
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
+
+
+
+
+
     public function index()
     {
         $carModels = CarModel::with('brand')->paginate(10);
@@ -22,6 +32,8 @@ class CarModelController extends Controller
 
     public function store(StoreCarModelRequest $request)
     {
+        $this->authorize('store', CarModel::class);
+
         $data = $request->validated();
         $carModel = CarModel::create($data);
 
@@ -66,6 +78,8 @@ class CarModelController extends Controller
             ], 404);
         }
 
+        $this->authorize('update', $carModel);
+
         $data = $request->validated();
         $carModel->fill($data)->save();
 
@@ -88,6 +102,8 @@ class CarModelController extends Controller
                 'message' => 'Modèle de voiture introuvable.',
             ], 404);
         }
+
+        $this->authorize('delete', $carModel);
 
         $carModel->delete();
 

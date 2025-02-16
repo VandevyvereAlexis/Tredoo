@@ -10,8 +10,20 @@ use App\Http\Requests\UpdateFavoriteRequest;
 
 class FavoriteController extends Controller
 {
+    public function __construct()
+    {
+        // Toutes les actions nécessitent une authentification
+        $this->middleware('auth:sanctum');
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', Favorite::class);
+
         $favorites = Favorite::paginate(10);
         return response()->json($favorites, 200);
     }
@@ -22,6 +34,8 @@ class FavoriteController extends Controller
 
     public function store(StoreFavoriteRequest $request)
     {
+        $this->authorize('create', Favorite::class);
+
         $data = $request->validated();
 
         // Vérification si le favori existe déjà
@@ -58,6 +72,8 @@ class FavoriteController extends Controller
             ], 404);
         }
 
+        $this->authorize('view', $favorite);
+
         return response()->json([
             'message' => 'Détails du favori récupérés avec succès.',
             'favorite' => $favorite
@@ -70,6 +86,8 @@ class FavoriteController extends Controller
 
     public function update(UpdateFavoriteRequest $request, Favorite $favorite)
     {
+        $this->authorize('update', $favorite);
+
         $data = $request->validated();
 
         // Vérifie si un favori identique existe déjà pour un autre enregistrement
@@ -106,6 +124,8 @@ class FavoriteController extends Controller
                 'message' => 'Favori non trouvé.',
             ], 404);
         }
+
+        $this->authorize('delete', $favorite);
 
         $favorite->delete();
 

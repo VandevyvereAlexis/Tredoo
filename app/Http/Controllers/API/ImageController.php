@@ -10,8 +10,20 @@ use App\Http\Requests\UpdateImageRequest;
 
 class ImageController extends Controller
 {
+    public function __construct()
+    {
+        // Toutes les actions nécessitent une authentification
+        $this->middleware('auth:sanctum');
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', Image::class);
+
         $images = Image::paginate(10);
         return response()->json($images, 200);
     }
@@ -24,6 +36,9 @@ class ImageController extends Controller
     {
         // Récupère les données d'entrée
         $annonceId = $request->input('annonce_id');
+
+        $this->authorize('create', new Image(['annonce_id' => $annonceId]));
+
         $newImages = $request->file('images');
         $positions = $request->input('positions', []);
 
@@ -63,6 +78,8 @@ class ImageController extends Controller
             ], 404);
         }
 
+        $this->authorize('view', $image);
+
         return response()->json([
             'message' => 'Détails de l\'image récupérés avec succès.',
             'image' => $image
@@ -75,6 +92,8 @@ class ImageController extends Controller
 
     public function update(UpdateImageRequest $request, Image $image)
     {
+        $this->authorize('update', $image);
+
         $data = $request->validated();
 
         // Remplace l'image existante
@@ -116,6 +135,8 @@ class ImageController extends Controller
                 'message' => 'Image non trouvée.',
             ], 404);
         }
+
+        $this->authorize('delete', $image);
 
         $image->delete();
 

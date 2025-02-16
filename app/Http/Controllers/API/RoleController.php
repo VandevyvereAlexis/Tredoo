@@ -10,8 +10,20 @@ use App\Http\Requests\UpdateRoleRequest;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        // Toutes les actions nécessitent une authentification
+        $this->middleware('auth:sanctum');
+    }
+
+
+
+
+
     public function index()
     {
+        $this->authorize('viewAny', Role::class);
+
         $roles = Role::paginate(10);
         return response()->json($roles, 200);
     }
@@ -22,6 +34,8 @@ class RoleController extends Controller
 
     public function store(StoreRoleRequest $request)
     {
+        $this->authorize('create', Role::class);
+
         $data = $request->validated();
         $role = Role::create($data);
 
@@ -45,6 +59,8 @@ class RoleController extends Controller
             ], 404);
         }
 
+        $this->authorize('view', $role);
+
         return response()->json([
             'message' => 'Détails du rôle récupérés avec succès.',
             'role' => $role
@@ -57,6 +73,8 @@ class RoleController extends Controller
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
+        $this->authorize('update', $role);
+
         $data = $request->validated();
         $role->update($data);
 
@@ -79,6 +97,8 @@ class RoleController extends Controller
                 'message' => 'Rôle non trouvé.',
             ], 404);
         }
+
+        $this->authorize('delete', $role);
 
         $role->delete();
 
