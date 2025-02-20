@@ -27,6 +27,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('home');
+
+        return response()->json(['message' => 'Déconnexion réussie.'], 200);
     }
 }

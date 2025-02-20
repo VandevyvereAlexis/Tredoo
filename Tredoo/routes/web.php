@@ -8,7 +8,5 @@ Route::get('/', function () {
 });
 
 
-Route::middleware(['web', 'auth:sanctum'])->group(function () {
-    Route::post('/login', [LoginController::class, 'login'])->name('login');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-});
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

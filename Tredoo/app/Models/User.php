@@ -74,4 +74,8 @@ class User extends Authenticatable
     public function conversationsAsSeller() {
         return $this->hasMany(Conversation::class, 'seller_id');
     }
+
+    public function isAdmin() {
+        return $this->role_id == 2;
+    }
 }
