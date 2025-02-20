@@ -29,33 +29,38 @@ describe("User Login", () => {
 
 async function login(user, credentials) {
 
-    // Récupérer le cookie CSRF avec les credentials
-    const res = await Axios.get('/sanctum/csrf-cookie', {
-        baseURL: 'http://localhost:8000',
-        withCredentials: true,
+    // On s'assure d'abord que l'utilisateur est déconnecté
+    await Axios.post('/logout', {
+        baseURL: 'http://localhost:8000'
     });
 
-    // Mettre à jour le header CSRF avec le token extrait
+    // On récupère le token CSRF
+    const res = await Axios.get('/sanctum/csrf-cookie', {
+        baseURL: 'http://localhost:8000'
+    });
+
+    Axios.defaults.headers.cookie = res.headers['set-cookie'];
     Axios.defaults.headers.common['X-CSRF-TOKEN'] = parseCSRFToken(res.headers['set-cookie']);
     Axios.defaults.headers.common['Origin'] = 'http://localhost:8000';
     Axios.defaults.headers.common['Referer'] = 'http://localhost:8000';
 
-    // Appeler /login avec l'option withCredentials
     const auth = await Axios.post('/login', credentials, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         baseURL: 'http://localhost:8000',
-        withCredentials: true,
     });
 
-    // Vous pouvez ensuite stocker les cookies de la réponse si nécessaire
+    Axios.defaults.headers.common = auth.headers['set-cookie'];
+    Axios.defaults.headers.common['X-CSRF-TOKEN'] = parseCSRFToken(auth.headers['set-cookie']);
+
     for (let key in auth.data.user) {
         user[key] = auth.data.user[key];
-    }
+    };
 
 };
 
 function parseCSRFToken(cookies) {
-    // Extrait la valeur entre "=" et ";" sans soustraction arbitraire
-    const cookieValue = cookies[0].split(';')[0];
-    return cookieValue.split('=')[1];
+    const startAt = cookies[0].indexOf('=');
+    const endAt = cookies[0].indexOf(';');
+    const csrf = cookies[0].substring(startAt + 1, endAt -3);
+    return csrf;
 };
