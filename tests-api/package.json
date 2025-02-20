@@ -1,0 +1,17 @@
+{
+  "name": "tests-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "moduel": "esnext",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest --runInBand"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "jest": "^29.7.0"
+  }
+}
